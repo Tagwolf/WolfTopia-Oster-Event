@@ -131,17 +131,7 @@
       overflow: hidden;
       z-index: 0;
     }
-
-    .particle {
-      position: absolute;
-      width: 16px;
-      height: 16px;
-      background-image: url('https://www.minecraft.net/etc.clientlibs/minecraft/clientlibs/main/resources/img/minecraft-creeper-face.png');
-      background-size: cover;
-      animation: float 6s linear infinite;
-      opacity: 0.8;
-    }
-
+    
     @keyframes float {
       0% {
         transform: translateY(100vh) rotate(0deg);
@@ -156,14 +146,6 @@
       }
     }
 
-    .chest {
-      width: 64px;
-      height: 64px;
-      background-image: url('https://i.imgur.com/8kKaKUJ.png');
-      background-size: cover;
-      margin: 10px auto;
-      transition: transform 0.3s ease;
-    }
 
     .chest.open {
       transform: scale(1.2) rotate(-10deg);

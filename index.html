@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Osterkiste für Minecraft</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: url('https://i.imgur.com/iCoSsZL.jpg');
+      background-size: cover;
+      font-family: 'Press Start 2P', cursive;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.4);
+      text-align: center;
+      max-width: 500px;
+      animation: fadeInUp 1.5s ease forwards;
+      transform: translateY(30px);
+      opacity: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    h1 {
+      font-size: 20px;
+      color: #3e8e41;
+      text-shadow: 1px 1px 1px #fff;
+    }
+
+    p {
+      font-size: 12px;
+      color: #555;
+    }
+
+    input {
+      padding: 12px;
+      width: 80%;
+      font-family: inherit;
+      font-size: 12px;
+      border: 2px solid #3e8e41;
+      border-radius: 5px;
+      margin-bottom: 15px;
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+      z-index: 2;
+      position: relative;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: #3e8e41;
+      color: white;
+      border: none;
+      font-family: inherit;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s;
+      box-shadow: 0 4px 0 #2d6a2f;
+    }
+
+    button:hover {
+      background: #45a049;
+    }
+
+    button:disabled {
+      background: #aaa;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    .message {
+      margin-top: 20px;
+      color: #2d6a2f;
+      font-size: 12px;
+    }
+
+    .egg {
+      width: 60px;
+      height: 80px;
+      background: radial-gradient(circle at 30% 30%, #fff176, #f06292);
+      border-radius: 50% 50% 45% 45%;
+      margin: 20px auto;
+      animation: bounce 2s infinite ease-in-out;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .bunny {
+      width: 100px;
+      margin: 0 auto 10px;
+      animation: hop 3s infinite ease-in-out;
+      display: block;
+      position: relative;
+      z-index: 0;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes hop {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    .particles {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .particle {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      background-image: url('https://www.minecraft.net/etc.clientlibs/minecraft/clientlibs/main/resources/img/minecraft-creeper-face.png');
+      background-size: cover;
+      animation: float 6s linear infinite;
+      opacity: 0.8;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-10vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    .chest {
+      width: 64px;
+      height: 64px;
+      background-image: url('https://i.imgur.com/8kKaKUJ.png');
+      background-size: cover;
+      margin: 10px auto;
+      transition: transform 0.3s ease;
+    }
+
+    .chest.open {
+      transform: scale(1.2) rotate(-10deg);
+    }
+  </style>
+</head>
+<body>
+  <div class="particles"></div>
+  <div class="container">
+    <img src="https://i.imgur.com/8kKaKUJ.png" alt="Minecraft Osterhase" class="bunny">
+    <div class="egg"></div>
+    <div class="chest" id="chest"></div>
+    <h1>✨ Osterkiste sichern! ✨</h1>
+    <p>Gib deinen Minecraft-Namen ein und erhalte eine kostenlose Osterkiste!</p>
+    <input type="text" id="mcName" placeholder="Minecraft-Name">
+    <br>
+    <button id="submitBtn">Osterkiste holen</button>
+    <div class="message" id="message"></div>
+  </div>
+
+  <audio id="rewardSound" src="https://cdn.pixabay.com/download/audio/2023/03/22/audio_7bdb59a8c4.mp3?filename=reward-144124.mp3"></audio>
+  <audio id="bgMusic" src="https://cdn.pixabay.com/download/audio/2023/03/22/audio_96cc04214e.mp3?filename=positive-background-music-144127.mp3" loop autoplay></audio>
+
+  <script>
+    const webhookURL = "https://discord.com/api/webhooks/1363420654304624774/NWJxNhyv1lAVD3R0dLa3tHadRXTCrAiJQaFHqEVykQSUM7z9bPE-piucdDLLvfLc07dM";
+    const btn = document.getElementById("submitBtn");
+    const message = document.getElementById("message");
+    const sound = document.getElementById("rewardSound");
+    const chest = document.getElementById("chest");
+
+    btn.addEventListener("click", async () => {
+      const name = document.getElementById("mcName").value.trim();
+      if (!name) {
+        alert("Bitte gib deinen Minecraft-Namen ein.");
+        return;
+      }
+
+      const claimed = localStorage.getItem("easterGiftClaimed_" + name.toLowerCase());
+      if (claimed) {
+        btn.disabled = true;
+        message.textContent = `Du hast deine Osterkiste bereits erhalten, ${name}!`;
+        return;
+      }
+
+      try {
+        await fetch(webhookURL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            content: `✨ Neuer Osterkisten-Empfänger: **${name}**`
+          })
+        });
+
+        localStorage.setItem("easterGiftClaimed_" + name.toLowerCase(), "true");
+        btn.disabled = true;
+        message.textContent = `Danke ${name}, du hast deine Osterkiste erhalten! ✨`;
+        sound.play();
+        chest.classList.add("open");
+        setTimeout(() => chest.classList.remove("open"), 1000);
+      } catch (err) {
+        alert("Fehler beim Versenden. Bitte versuche es später nochmal.");
+      }
+    });
+
+    const particles = document.querySelector(".particles");
+    for (let i = 0; i < 25; i++) {
+      const part = document.createElement("div");
+      part.className = "particle";
+      part.style.left = Math.random() * 100 + "%";
+      part.style.animationDuration = 4 + Math.random() * 4 + "s";
+      part.style.animationDelay = Math.random() * 5 + "s";
+      particles.appendChild(part);
+    }
+  </script>
+</body>
+</html>
